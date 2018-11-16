@@ -9,8 +9,7 @@ import javax.persistence.Id;
 @Entity 
 public class Account {
 	
-	
-	@Id @GeneratedValue(strategy=GenerationType.AUTO)
+	@Id 
 	private Long id;
 	
 	@Column(length=20)

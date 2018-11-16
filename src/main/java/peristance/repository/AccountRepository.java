@@ -6,15 +6,13 @@ import persistance.domain.Account;
 
 public interface AccountRepository {
 
-	//List<Account> findAllAccounts();
+	String getAllAccounts();
 	
-	//Account findAccount(Long id);
+	String addAccount(String account);
 	
-	Account createAccount(Long id, Account createAccount);
+	String updateAccount(Long id, String accountToUpdate);
 	
-	Account updateAccount(Account updateAccount, long id);
-	
-	Account deleteAccount(Account deleteAccount, long id);
+	String deleteAccount(Long id);
 	
 	
 }

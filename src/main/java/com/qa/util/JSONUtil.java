@@ -6,7 +6,7 @@ import persistance.domain.Account;
 
 public class JSONUtil {
 
-	private static Gson gson;
+	private static Gson gson = new Gson();
 
 	public JSONUtil() {
 		this.gson = new Gson();
@@ -16,8 +16,8 @@ public class JSONUtil {
 		return gson.toJson(obj);
 	}
 
-	public static <T> T getObjectForJSON(Account createAccount, Class<Account> class1) {
-		return (T) gson.toJson(createAccount, class1);
+	public static <T>  T getObjectForJSON(String account, Class<T> class1) {
+		return gson.fromJson(account, class1);
 	}
 
 }

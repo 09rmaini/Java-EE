@@ -3,9 +3,6 @@ package peristance.repository;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.SUPPORTS;
 
-
-import java.util.List;
-
 import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,49 +14,77 @@ import com.qa.util.JSONUtil;
 import persistance.domain.Account;
 
 
-@Transactional(SUPPORTS) // for table not changing like find
+
 @Default 
+@Transactional(SUPPORTS) // for table not changing like find
 public class AccountServiceDBImpl implements AccountRepository {
 
 	@PersistenceContext(unitName = "primary")
 	private EntityManager manager;
 	
-	public List<Account> findAllAccounts() {
-        TypedQuery<Account> query = manager.createQuery("SELECT m FROM Account m ORDER BY m.account_number DESC", Account.class);
-        return query.getResultList();
-    }
 	
-	public Account findAccount(Long id) {
-		return manager.find(Account.class, id);
+	@Override
+	public String getAllAccounts() {
+		TypedQuery<Account> accounts = manager.createQuery("Select a FROM Account a",Account.class);
+		return JSONUtil.getJSONForObject(accounts);
 	}
+
+	
 	
 	
 	
 
+	@Override
 	@Transactional(REQUIRED)
-	public Account createAccount(Long id,Account createAccount) {
-		manager.persist(createAccount);
-		return createAccount;
+	public String addAccount(String account) {
+		Account anAccount = JSONUtil.getObjectForJSON(account, Account.class);
+		manager.persist(anAccount);
+		return "{\"message\": \"account has been sucessfully added\"}";
 	}
+
+	
 	
 	@Transactional(REQUIRED)
-	public Account updateAccount(Account updateAccount, long id) {
-		Account oldAccount=manager.find(Account.class, id);
-		oldAccount.setFirst_name(updateAccount.getFirst_name());
-		oldAccount.setSurname(updateAccount.getSurname());
-		
-		//updateAccount()
-		
-		
-		manager.merge(updateAccount);
-		return updateAccount;
+	public String updateAccount(Long id, String accountToUpdate) {
+		Account updatedAccount = JSONUtil.getObjectForJSON(accountToUpdate, Account.class);
+		Account accountFromDB = findAccount(id);
+		if (accountToUpdate != null) {
+			accountFromDB = updatedAccount;
+			manager.merge(accountFromDB);
+		}
+		return "{\"message\": \"account sucessfully updated\"}";
 	}
 	
+	@Override
 	@Transactional(REQUIRED)
-	public Account deleteAccount(Account deleteAccount, long id) {
-		manager.remove(deleteAccount);
-		return deleteAccount;
+	public String deleteAccount(Long id) {
+		Account accountInDB = findAccount(id);
+		if (accountInDB != null) {
+			manager.remove(accountInDB);
+		}
+		return "{\"message\": \"account sucessfully deleted\"}";
 	}
+
+
+
+
+	private Account findAccount(Long id) {
+		return manager.find(Account.class, id);
+	}
+
+	public void setManager(EntityManager manager) {
+		this.manager = manager;
+	}
+
+	
+	
+
+
+
+
+
+
+	
 	
 	
 }

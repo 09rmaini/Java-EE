@@ -1,28 +1,26 @@
 package peristance.repository;
 
-import java.util.HashMap;
+
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
+
 
 import persistance.domain.Account;
 import com.qa.util.JSONUtil;
 
 @ApplicationScoped
 @Alternative
-public class AccountMapRepository implements AccountRepository {
+public class AccountMapRepository implements AccountRepository  {
+	
+
 	
 	private final Long INITIAL_COUNT = 1L;
 	private Map<Long, Account> accountMap;
+	private Long ID;
 	
-
-	public AccountMapRepository() {
-		this.accountMap = new HashMap<Long, Account>();
-		
-		initAccountMap();
-	}
+	
 
 
 	public String getAllAccounts() {
@@ -33,30 +31,37 @@ public class AccountMapRepository implements AccountRepository {
 
 
 
-	public Account createAccount(Long id, Account createAccount) {
-		
-		Account newAccount = JSONUtil.getObjectForJSON(createAccount, Account.class);
-		accountMap.put(id, newAccount);
-		return createAccount;
+	public String addAccount(String account) {
+		ID++;
+		Account newAccount = JSONUtil.getObjectForJSON(account, Account.class);
+		accountMap.put(ID, newAccount);
+		return account;
 	}
 
 	
-	public Account updateAccount(Account updateAccount, long id) {
-		Account newAccount = JSONUtil.getObjectForJSON(updateAccount, Account.class);
+	public String updateAccount(Long id, String accountToUpdate) {
+		Account newAccount = JSONUtil.getObjectForJSON(accountToUpdate, Account.class);
 		accountMap.put(id, newAccount);
-		return updateAccount;
+		return accountToUpdate;
 	}
 
+
 	
-	public Account deleteAccount(Account deleteAccount, long id) {
+	public String deleteAccount(Long id) {
 		accountMap.remove(id);
-		return deleteAccount;
+		return "{\"message\": \"accout successfully \"}";
 	}
 
 	private void initAccountMap() {
 		Account account = new Account();
 		accountMap.put(1L, account);
 	}
+
+
+	
+
+
+	
 
 
 	
